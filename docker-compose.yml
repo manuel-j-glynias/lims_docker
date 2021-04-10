@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  proxy:
+    image: hylomorphic/flask_proxy
+    container_name: proxy
+    ports:
+      - "5000:5000"
+
+  lims_ui:
+    image: hylomorphic/lims_ui:alpha_1
+    ports:
+      - "80:3003"
+  db:
+    image: hylomorphic/rpci-neo4j
+    container_name: rpci-neo4j
+    volumes:
+      - $HOME/neo4j/data:/var/lib/neo4j/data
+    ports:
+      - "7474:7474"
+      - "7687:7687"
