@@ -2,15 +2,37 @@ version: '3'
 
 services:
   proxy:
-    image: hylomorphic/flask_proxy
+    image: hylomorphic/flask_proxy:alpha_1
     container_name: proxy
     ports:
       - "5000:5000"
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - 80:80
+    restart: unless-stopped
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/conf/proxy-pass-common.conf:/etc/nginx/proxy-pass-common.conf
+    depends_on:
+      - proxy
+
+  hl7_receiver:
+    image: hylomorphic/hl7_receiver:alpha_1
+    container_name: hl7_receiver
+    ports:
+      - "2575:2575"
+
+  order_monitor:
+    image: hylomorphic/order_monitor:alpha_1
+    container_name: order_monitor
 
   lims_ui:
     image: hylomorphic/lims_ui:alpha_1
-    ports:
-      - "80:3003"
+#    ports:
+#      - "3003:3003"
   db:
     image: hylomorphic/rpci-neo4j
     container_name: rpci-neo4j
